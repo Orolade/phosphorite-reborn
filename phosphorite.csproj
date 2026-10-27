@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <GameManagedDirectory />
+    <BepInExCoreDirectory />
+    <BananaOSPath />
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <AssemblyName>phosphorite</AssemblyName>
+    <RootNamespace>phosphorite</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="src/**/*.cs" />
+    <Reference Include="BepInEx" HintPath="$(BepInExCoreDirectory)/BepInEx.dll" Private="false" />
+    <Reference Include="0Harmony" HintPath="$(BepInExCoreDirectory)/0Harmony.dll" Private="false" />
+    <Reference Include="BananaOS" HintPath="$(BananaOSPath)" Private="false" />
+    <Reference Include="Assembly-CSharp" HintPath="$(GameManagedDirectory)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="UnityEngine" HintPath="$(GameManagedDirectory)/UnityEngine.dll" Private="false" />
+    <Reference Include="UnityEngine.CoreModule" HintPath="$(GameManagedDirectory)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.PhysicsModule" HintPath="$(GameManagedDirectory)/UnityEngine.PhysicsModule.dll" Private="false" />
+    <Reference Include="UnityEngine.ParticleSystemModule" HintPath="$(GameManagedDirectory)/UnityEngine.ParticleSystemModule.dll" Private="false" />
+    <Reference Include="UnityEngine.AudioModule" HintPath="$(GameManagedDirectory)/UnityEngine.AudioModule.dll" Private="false" />
+    <Reference Include="UnityEngine.XRModule" HintPath="$(GameManagedDirectory)/UnityEngine.XRModule.dll" Private="false" />
+    <Reference Include="Unity.Collections" HintPath="$(GameManagedDirectory)/Unity.Collections.dll" Private="false" />
+    <Reference Include="Unity.Mathematics" HintPath="$(GameManagedDirectory)/Unity.Mathematics.dll" Private="false" />
+    <Reference Include="Fusion.Log" HintPath="$(GameManagedDirectory)/Fusion.Log.dll" Private="false" />
+    <Reference Include="Fusion.Runtime" HintPath="$(GameManagedDirectory)/Fusion.Runtime.dll" Private="false" />
+    <Reference Include="PhotonUnityNetworking" HintPath="$(GameManagedDirectory)/PhotonUnityNetworking.dll" Private="false" />
+    <Reference Include="PhotonRealtime" HintPath="$(GameManagedDirectory)/PhotonRealtime.dll" Private="false" />
+    <Reference Include="Photon3Unity3D" HintPath="$(GameManagedDirectory)/Photon3Unity3D.dll" Private="false" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(GameManagedDirectory)/Newtonsoft.Json.dll" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CheckLocalReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(GameManagedDirectory)/Assembly-CSharp.dll')"
+           Text="Set GameManagedDirectory to the game's Managed directory in this project or pass -p:GameManagedDirectory=... ." />
+    <Error Condition="!Exists('$(BepInExCoreDirectory)/BepInEx.dll')"
+           Text="Set BepInExCoreDirectory to your BepInEx/core directory in this project or pass -p:BepInExCoreDirectory=... ." />
+    <Error Condition="!Exists('$(BananaOSPath)')"
+           Text="Set BananaOSPath to BananaOS.dll in this project or pass -p:BananaOSPath=... ." />
+  </Target>
+</Project>
