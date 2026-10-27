@@ -1,41 +1,62 @@
-# phosphorite
+# Phosphorite Reborn
+
 <div align="left">
- <img src="https://github.com/BrokenSt0ne/phosphorite/blob/main/preview.png?raw=true" width=50% height=40%</img><br>
- <a href="https://github.com/BrokenSt0ne/phosphorite/releases/latest">
- <img src="https://img.shields.io/github/downloads/BrokenSt0ne/phosphorite/total?label=Downloads&style=flat-square"<img></a>
+  <img src="https://github.com/Orolade/phosphorite-reborn/blob/main/preview.png?raw=true" width="50%" alt="Lighting preview"><br>
+  <a href="https://github.com/Orolade/phosphorite-reborn/releases">
+    <img src="https://img.shields.io/github/downloads/Orolade/phosphorite-reborn/total?label=Downloads&style=flat-square" alt="Downloads">
+  </a>
 </div>
-A WIP Experimental real-time lighting mod for Gorilla Tag using the GorillaCorp lighting.
+
+An experimental client-side real-time lighting mod for Gorilla Tag using the game's native lighting system.
+
+Based on [phosphorite by BrokenSt0ne](https://github.com/BrokenSt0ne/phosphorite).
 
 ## Features
-* Realtime lighting using the GorillaCorp lighting.
+
+* Real-time lighting using the game's own lighting system.
 * Full control over:
-  * Light Positions
-  * Color
+  * Light positions
+  * Colors
   * Intensities
-* Load/save lights via JSON
-* Simple in-game UI
-* Works in both **modded** and **non-modded** lobbies since it doesnt give an advantage.
-* Changing already created lights.
+* Light Spawner and Light Editor through BananaOS.
+* Move, toggle and destroy existing lights.
+* Load/save lights via JSON, with automatic loading and saving enabled by default.
+* Baked lighting toggle and adjustable ambient color.
+* Map-specific lighting.
+* Expanded light capacity and view-based culling.
+* Local flashlight and Ghost Reactor lantern with infinite charge.
 
 ## Usage
-You create and load lights via a menu opened by pressing the `V` key on your keyboard (they do *not* autoload as of now).
 
-In the UI you should be greeted with options for position, intensity and color and a couple utility buttons beneath.
+Place `phosphorite.dll` inside `BepInEx/plugins/phosphorite/`. Your lighting file must be named `data.json` and placed in the same folder as the DLL.
 
-To load a json, click the `Load Lights from JSON` button in the ui. [Heres a good example of a json.](https://github.com/BrokenSt0ne/phosphorite/blob/main/data.json) *(note that it must be called data.json as of now and placed inside the folder your phosphorite plugin is in)*
+Open Light Spawner in BananaOS to choose the color and intensity. Hold the right grip to aim, then press the trigger to place a light.
 
-**Warning**: Spawning too many lights will cause lag. Use wisely.
+Open Light Editor to select an existing light by aiming at its marker and pressing the trigger while holding the right grip. You can change its settings, toggle it, or choose Move light and Destroy light.
 
-**If it doesn't look like it's working, set your ambient color to #000000 and add a light at your location**
+To move a selected light, choose Move light, hold the right grip to aim at its new position, then make a fresh trigger press to confirm.
+
+Light Spawner and Light Editor continue working with the watch closed while their page remains selected.
+
+The Lighting page provides baked lighting controls, ambient RGB settings, and actions for saving, loading and clearing lights from the current map. One `data.json` stores lighting for all maps.
+
+The Portable Lights page lets you create or remove the flashlight and lantern. The flashlight attaches to the right hand, while the lantern can be grabbed, dropped and placed in the world. Both use their native switching controls and have infinite charge.
+
+If the lantern model is unavailable, visit Ghost Reactor once during the current game session.
+
+**Warning:** Large lighting setups can reduce performance.
 
 ## Contributing & Issues
 
-* Found a bug? [Submit an issue](https://github.com/BrokenSt0ne/phosphorite/issues)
+* Found a bug? [Submit an issue](https://github.com/Orolade/phosphorite-reborn/issues).
 * Know your way around code? Pull requests are welcome!
 
 ## Compatibility
 
-* Works in **non-modded lobbies** (visual-only, no advantage)
-* May give **slight advantage** if used with mods like [PlayerGlow by The-Graze](https://github.com/The-Graze/PlayerGlow)
+* Gorilla Tag for PC.
+* Requires BepInEx 5 and BananaOS 1.1.1.
+* All custom lighting and spawned items are client-side and are not synchronized with other players.
 
-###### *This product is not affiliated with Another Axiom Inc. or its videogames Gorilla Tag and Orion Drift and is not endorsed or otherwise sponsored by Another Axiom. Portions of the materials contained herein are property of Another Axiom. ©2021 Another Axiom Inc.*
+Original phosphorite by BrokenSt0ne. Distributed under the [MIT License](LICENSE).
+
+###### *This product is not affiliated with Another Axiom Inc. or Gorilla Tag and is not endorsed or sponsored by Another Axiom.*
