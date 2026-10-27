@@ -7,7 +7,7 @@
   </a>
 </div>
 
-An experimental client-side real-time lighting mod for Gorilla Tag using the game's native lighting system.
+An experimental client-side real-time lighting mod for Gorilla Tag using the Ghost Reactor lighting system.
 
 Based on [phosphorite by BrokenSt0ne](https://github.com/BrokenSt0ne/phosphorite).
 
