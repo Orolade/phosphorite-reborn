@@ -42,8 +42,6 @@ The Lighting page provides baked lighting controls, ambient RGB settings, and ac
 
 The Portable Lights page lets you create or remove the flashlight and lantern. The flashlight attaches to the right hand, while the lantern can be grabbed, dropped and placed in the world. Both use their native switching controls and have infinite charge.
 
-If the lantern model is unavailable, visit Ghost Reactor once during the current game session.
-
 **Warning:** Large lighting setups can reduce performance.
 
 ## Contributing & Issues
