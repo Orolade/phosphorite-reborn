@@ -154,7 +154,6 @@ namespace phosphorite
 
         static bool HandleInput(bool aiming, float trigger, bool surface, GameLight hover, Vector3 destination)
         {
-            SyncPage();
             if (lightTool == EditorMode.Off) return false;
             bool moving = lightTool == EditorMode.Move;
             if (moving)
