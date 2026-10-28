@@ -4,6 +4,6 @@ namespace phosphorite
     {
         public const string GUID = "com.brokenstone.gorillatag.phosphorite";
         public const string Name = "phosphorite";
-        public const string Version = "1.11.4";
+        public const string Version = "1.0.0";
     }
 }
