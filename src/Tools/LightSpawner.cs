@@ -27,9 +27,6 @@ namespace phosphorite
         {
             get
             {
-                var current = LightColor;
-                var levels = new Color(LightValues.ToLevel(current.r) / 9f, LightValues.ToLevel(current.g) / 9f, LightValues.ToLevel(current.b) / 9f, 1);
-                if (LightValues.ToHex(current) != LightValues.ToHex(levels)) SetColor(levels);
                 return LightColor;
             }
         }
@@ -59,7 +56,6 @@ namespace phosphorite
         public static void Update()
         {
             bool active = SyncPage();
-            LightEditorTool.SyncPage();
             if (skipFrame)
             {
                 skipFrame = false;
