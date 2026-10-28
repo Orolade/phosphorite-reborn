@@ -75,6 +75,8 @@ namespace phosphorite
         public static void ClearLights()
         {
             LightRenderer.OnLightsCleared();
+            LightEditor.OnLightsCleared();
+            MapLighting.OnLightsCleared();
             foreach (var light in lights.ToArray()) RemoveLight(light);
             lights.Clear();
         }
