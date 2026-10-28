@@ -57,7 +57,9 @@ namespace phosphorite
             ToolPointer.Dispose();
             LightEditor.Dispose();
             LightingManager.ClearLights();
+            MapLighting.Dispose();
             LightRenderer.Dispose();
+            SceneLighting.Restore();
             if (LightingManager.Runner != null) Destroy(LightingManager.Runner);
             LightingManager.Runner = null;
             host = null;
