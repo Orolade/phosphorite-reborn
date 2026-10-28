@@ -114,8 +114,6 @@ namespace phosphorite
         {
             dirty = true;
             entries.Clear();
-            LightEditor.OnLightsCleared();
-            MapLighting.OnLightsCleared();
         }
 
         internal static bool TrySync(GameLightingManager manager)
@@ -328,11 +326,9 @@ namespace phosphorite
 
         public static void Dispose()
         {
-            MapLighting.Dispose();
             LightRenderHooks.Dispose();
             if (LightBuffers.Allocated) RestoreNativeLighting(GameLightingManager.instance);
             ReleaseExtendedLighting();
-            SceneLighting.Restore();
             entries.Clear();
             transientLights.Clear();
             syncedManager = null;
