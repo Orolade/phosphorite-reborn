@@ -34,9 +34,6 @@ namespace phosphorite
         {
             get
             {
-                var current = LightingManager.ambient;
-                var color = new Color(LightValues.ToByte(LightValues.ToLevel(current.r) / 9f) / 255f, LightValues.ToByte(LightValues.ToLevel(current.g) / 9f) / 255f, LightValues.ToByte(LightValues.ToLevel(current.b) / 9f) / 255f, 1);
-                if (!LightValues.SameAmbient(current, color)) SetAmbient(color);
                 return LightingManager.ambient;
             }
         }
