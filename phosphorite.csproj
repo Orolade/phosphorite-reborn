@@ -33,13 +33,4 @@
     <Reference Include="Photon3Unity3D" HintPath="$(GameManagedDirectory)/Photon3Unity3D.dll" Private="false" />
     <Reference Include="Newtonsoft.Json" HintPath="$(GameManagedDirectory)/Newtonsoft.Json.dll" Private="false" />
   </ItemGroup>
-
-  <Target Name="CheckLocalReferences" BeforeTargets="ResolveReferences">
-    <Error Condition="!Exists('$(GameManagedDirectory)/Assembly-CSharp.dll')"
-           Text="Set GameManagedDirectory to the game's Managed directory in this project or pass -p:GameManagedDirectory=... ." />
-    <Error Condition="!Exists('$(BepInExCoreDirectory)/BepInEx.dll')"
-           Text="Set BepInExCoreDirectory to your BepInEx/core directory in this project or pass -p:BepInExCoreDirectory=... ." />
-    <Error Condition="!Exists('$(BananaOSPath)')"
-           Text="Set BananaOSPath to BananaOS.dll in this project or pass -p:BananaOSPath=... ." />
-  </Target>
 </Project>
