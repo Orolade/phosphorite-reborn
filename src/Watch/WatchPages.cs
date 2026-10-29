@@ -15,7 +15,6 @@ namespace phosphorite
         static readonly Type[] pages = { typeof(LightSpawnerPage), typeof(LightingPage), typeof(LightEditorPage), typeof(PortableLightsPage) };
 
         internal static bool Owns(Type type) { return Array.IndexOf(pages, type) >= 0; }
-        internal static void Update() { WatchMenuOrder.Update(); }
 
         internal static void Register()
         {
