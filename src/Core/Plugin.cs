@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace phosphorite
 {
-    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
+    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.AssemblyVersion)]
     public class Plugin : BaseUnityPlugin
     {
         static MonoBehaviour host;
@@ -19,7 +19,6 @@ namespace phosphorite
             logger = Logger;
             ModSettings.Configure(Config);
             LightSpawnerSettings.Configure(Config);
-            SceneLighting.Configure(Config);
             MapLighting.Initialize();
             PortableLightAssets.Initialize();
             LightRenderHooks.Initialize();
@@ -35,9 +34,8 @@ namespace phosphorite
                 gameObject.AddComponent<LightingManager>();
                 LightingManager.PendingAutoLoad = ModSettings.AutoLoad;
             }
-            WatchPages.Update();
+            WatchMenuOrder.Update();
             MapLighting.Update();
-            SceneLighting.Update();
         }
 
         void LateUpdate()
@@ -47,7 +45,7 @@ namespace phosphorite
             PortableLights.Update();
         }
 
-        void OnSceneUnloaded(Scene scene) { LightingManager.ReapplyAmbient(); }
+        void OnSceneUnloaded(Scene scene) { LightingManager.SetAmbient(LightingManager.ambient); }
 
         void OnDestroy()
         {
@@ -59,7 +57,6 @@ namespace phosphorite
             LightingManager.ClearLights();
             MapLighting.Dispose();
             LightRenderer.Dispose();
-            SceneLighting.Restore();
             if (LightingManager.Runner != null) Destroy(LightingManager.Runner);
             LightingManager.Runner = null;
             host = null;

@@ -13,7 +13,6 @@ namespace phosphorite
 
         public static int GrowCapacity(int required, int minimum)
         {
-            if (required < 0 || minimum < 1) throw new ArgumentOutOfRangeException();
             int size = minimum;
             while (size < required)
             {
