@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -51,12 +50,5 @@ namespace phosphorite
             return false;
         }
 
-        public static bool IsMapObject(GameObject go)
-        {
-            if (go == null || go.name == "phosphorite_light" || go.name == "LightingManager" || !go.scene.IsValid() || !go.scene.isLoaded || go.scene.name == "DontDestroyOnLoad" || !go.activeInHierarchy) return false;
-            if (go.GetComponentInParent<VRRig>(true) != null || go.GetComponentInParent<GorillaTagger>(true) != null || go.GetComponentInParent<Camera>(true) != null || go.GetComponentInParent<ParticleSystem>(true) != null || go.GetComponentInParent<Rigidbody>(true) != null) return false;
-            var renderer = go.GetComponent<Renderer>();
-            return !(renderer is ParticleSystemRenderer) && !(renderer is TrailRenderer) && !(renderer is LineRenderer) && !(renderer is SkinnedMeshRenderer);
-        }
     }
 }

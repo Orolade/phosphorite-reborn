@@ -22,7 +22,7 @@ namespace phosphorite
         internal static void CopyFlashlightBrightness(HatcheryEventFlashlight source, Transform[] lights)
         {
             float value = (float) brightness.GetValue(source);
-            if (!LightValues.IsFinite(value) || value <= 0) value = lights[0].GetComponent<Light>().intensity;
+            if (value <= 0) value = lights[0].GetComponent<Light>().intensity;
             foreach (var light in lights) light.GetComponent<Light>().intensity = value;
         }
 
@@ -82,8 +82,7 @@ namespace phosphorite
             var local = GamePlayerLocal.instance;
             if (local == null) return Vector3.zero;
             int hand = right ? GamePlayer.RIGHT_HAND : GamePlayer.LEFT_HAND;
-            var velocity = angular ? local.GetHandAngularVelocity(hand) : local.GetHandVelocity(hand);
-            return LightValues.IsFinitePoint(velocity) ? velocity : Vector3.zero;
+            return angular ? local.GetHandAngularVelocity(hand) : local.GetHandVelocity(hand);
         }
     }
 }
