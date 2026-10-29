@@ -65,11 +65,15 @@ namespace phosphorite
         {
             get
             {
-                var light = GetSelectedLight();
-                if (light == null) return 1f;
-                float value = LightingManager.GetIntensity(light), saved;
-                return value != 0 ? value : offIntensity.TryGetValue(light, out saved) ? saved : 1f;
+                return ReadIntensity(GetSelectedLight());
             }
+        }
+
+        internal static float ReadIntensity(GameLight light)
+        {
+            if (light == null) return 1f;
+            float value = LightingManager.GetIntensity(light), saved;
+            return value != 0 ? value : offIntensity.TryGetValue(light, out saved) ? saved : 1f;
         }
 
         public static Color LightColor
