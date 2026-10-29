@@ -21,7 +21,6 @@ Based on [phosphorite by BrokenSt0ne](https://github.com/BrokenSt0ne/phosphorite
 * Light Spawner and Light Editor through BananaOS.
 * Move, toggle and destroy existing lights.
 * Load/save lights via JSON, with automatic loading and saving enabled by default.
-* Baked lighting toggle and adjustable ambient color.
 * Map-specific lighting.
 * Expanded light capacity and view-based culling.
 * Local flashlight and Ghost Reactor lantern with infinite charge.
