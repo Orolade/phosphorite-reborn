@@ -24,7 +24,7 @@ namespace phosphorite
             var rig = source.GetComponentInParent<VRRig>(true);
             if (rig == null || rig.rightHandTransform == null) return false;
             var scale = rig.rightHandTransform.lossyScale;
-            if (!LightValues.IsFinitePoint(scale) || scale.x == 0 || scale.y == 0 || scale.z == 0) return false;
+            if (scale.x == 0 || scale.y == 0 || scale.z == 0) return false;
             if (rig.rightHandTransform.IsChildOf(source.flashlight) || rig.rightHandTransform.IsChildOf(source.lightsParent) || rig.rightHandTransform.IsChildOf(source.lightStart)) return false;
             foreach (var light in source.lights) if (light == null || light.GetComponent<GameLight>() == null || light.GetComponent<Light>() == null) return false;
             return source.flashlight.GetComponentsInChildren<Renderer>(true).Length > 0;
@@ -116,7 +116,6 @@ namespace phosphorite
 
         static Vector3 Divide(Vector3 value, Vector3 scale)
         {
-            if (!LightValues.IsFinitePoint(scale) || scale.x == 0 || scale.y == 0 || scale.z == 0) throw new InvalidOperationException("Uninitialized item transform");
             return new Vector3(value.x / scale.x, value.y / scale.y, value.z / scale.z);
         }
 

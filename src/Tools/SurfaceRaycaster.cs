@@ -20,17 +20,12 @@ namespace phosphorite
 
         internal static bool Raycast(Ray ray, out RaycastHit target)
         {
-            return Raycast(ray, GunMaxDistance, out target);
-        }
-
-        internal static bool Raycast(Ray ray, float maximum, out RaycastHit target)
-        {
             target = default(RaycastHit);
-            int count = Physics.RaycastNonAlloc(ray, gunHits, maximum, ~0, QueryTriggerInteraction.Ignore);
+            int count = Physics.RaycastNonAlloc(ray, gunHits, GunMaxDistance, ~0, QueryTriggerInteraction.Ignore);
             var hits = gunHits;
             if (count == gunHits.Length)
             {
-                hits = Physics.RaycastAll(ray, maximum, ~0, QueryTriggerInteraction.Ignore);
+                hits = Physics.RaycastAll(ray, GunMaxDistance, ~0, QueryTriggerInteraction.Ignore);
                 count = hits.Length;
             }
             bool found = false;
@@ -41,7 +36,6 @@ namespace phosphorite
                 var hit = hits[i];
                 var collider = hit.collider;
                 if (!IsWorldSurface(collider)) continue;
-                if (!LightValues.IsFinite(hit.point.x) || !LightValues.IsFinite(hit.point.y) || !LightValues.IsFinite(hit.point.z) || !LightValues.IsFinite(hit.normal.x) || !LightValues.IsFinite(hit.normal.y) || !LightValues.IsFinite(hit.normal.z)) continue;
                 int id = collider.GetInstanceID();
                 if (!IsCloserHit(hit.distance, id, best, bestId)) continue;
                 found = true;

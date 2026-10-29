@@ -8,6 +8,7 @@ namespace phosphorite
         static PortableLightInstance flashlight, lantern;
         static bool lanternRight;
         static string status = "";
+        const string lanternRestricted = "Lantern is disabled in Ghost Reactor";
 
         public static string Status { get { return status; } }
         public static bool FlashlightEnabled { get { return flashlight != null; } }
@@ -27,12 +28,36 @@ namespace phosphorite
         public static void RecallLantern()
         {
             status = "";
+            if (LanternHandInReactor())
+            {
+                status = lanternRestricted;
+                return;
+            }
             if (lantern != null) lantern.Recall(lanternRight);
+        }
+
+        static bool PlayerInReactor()
+        {
+            var tagger = GorillaTagger.Instance;
+            var rig = tagger == null ? null : tagger.offlineVRRig;
+            return rig != null && rig.zoneEntity != null && MapLighting.Normalize(rig.zoneEntity.currentZone) == GTZone.ghostReactor;
+        }
+
+        static bool LanternHandInReactor()
+        {
+            if (PlayerInReactor()) return true;
+            var hand = NativePortableAccess.Hand(lanternRight);
+            return hand != null && MapLighting.IsGhostReactor(hand.position);
         }
 
         public static void SetEnabled(bool isFlashlight, bool enabled)
         {
             status = "";
+            if (!isFlashlight && enabled && LanternHandInReactor())
+            {
+                status = lanternRestricted;
+                return;
+            }
             var item = isFlashlight ? flashlight : lantern;
             if ((item != null) == enabled) return;
             try
@@ -68,7 +93,15 @@ namespace phosphorite
         public static void Update()
         {
             if (flashlight != null) flashlight.Update();
-            if (lantern != null) lantern.Update();
+            if (lantern != null)
+            {
+                lantern.Update();
+                if (PlayerInReactor() || lantern.InGhostReactor)
+                {
+                    SetEnabled(false, false);
+                    status = lanternRestricted;
+                }
+            }
         }
 
         public static void Dispose()

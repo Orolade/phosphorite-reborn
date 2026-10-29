@@ -10,11 +10,12 @@ namespace phosphorite
         static LineRenderer gunLine;
         static Renderer gunPointerRenderer;
         static Material gunMaterial;
+        static bool hadSurface;
         internal static bool Exists
         {
             get
             {
-                return !ReferenceEquals(gunRoot, null);
+                return gunRoot != null;
             }
         }
 
@@ -57,9 +58,12 @@ namespace phosphorite
             gunPointerRenderer.receiveShadows = false;
         }
 
-        internal static void ShowPointer(Vector3 origin, Vector3 end, bool hit, Color color, float scale)
+        internal static void ShowPointer(Vector3 origin, Vector3 end, bool showMarker, Color color, float scale, bool surface)
         {
             CreatePointer();
+            if (gunRoot.activeSelf && surface == hadSurface)
+                end = Vector3.Lerp(gunPointer.transform.position, end, 1f - Mathf.Exp(-26.5f * Time.unscaledDeltaTime));
+            hadSurface = surface;
             gunMaterial.color = color;
             gunLine.startColor = Color.white;
             gunLine.endColor = Color.white;
@@ -69,7 +73,7 @@ namespace phosphorite
             gunLine.SetPosition(1, end);
             gunPointer.transform.position = end;
             gunPointer.transform.localScale = Vector3.one * (0.06f * scale);
-            gunPointerRenderer.enabled = hit;
+            gunPointerRenderer.enabled = showMarker;
             gunRoot.SetActive(true);
         }
 

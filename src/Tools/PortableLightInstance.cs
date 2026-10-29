@@ -12,6 +12,11 @@ namespace phosphorite
         readonly GameLight[] lights;
         readonly bool[] registered;
 
+        internal bool InGhostReactor
+        {
+            get { return lantern != null && MapLighting.IsGhostReactor(lantern.gameEntity.transform.position); }
+        }
+
         internal PortableLightInstance(GameObject root, bool isFlashlight)
         {
             this.root = root;

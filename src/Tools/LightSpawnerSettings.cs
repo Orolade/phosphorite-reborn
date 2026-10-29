@@ -26,6 +26,11 @@ namespace phosphorite
             if (colorConfig != null) colorConfig.Value = LightValues.ToHex(color);
         }
 
+        public static void ChangeChannel(int channel, int direction)
+        {
+            SetColor(LightValues.StepColor(color, channel, direction));
+        }
+
         internal static void Configure(ConfigFile config)
         {
             intensityConfig = config.Bind("LightGun", "Intensity", 1f, "");
@@ -33,7 +38,7 @@ namespace phosphorite
             SetIntensity(intensityConfig.Value);
             Color parsed;
             string saved = colorConfig.Value;
-            SetColor(ColorUtility.TryParseHtmlString(saved ?? "", out parsed) && LightValues.IsValidRgb(parsed.r, parsed.g, parsed.b) ? parsed : Color.white);
+            SetColor(ColorUtility.TryParseHtmlString(saved ?? "", out parsed) ? parsed : Color.white);
         }
     }
 }

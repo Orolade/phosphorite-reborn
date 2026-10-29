@@ -1,5 +1,3 @@
-using System;
-
 namespace phosphorite
 {
     public class TriggerPress
@@ -14,7 +12,7 @@ namespace phosphorite
 
         public bool Step(bool aiming, float trigger, bool validTarget)
         {
-            if (!aiming || !LightValues.IsFinite(trigger))
+            if (!aiming)
             {
                 Reset();
                 return false;
