@@ -15,7 +15,6 @@ namespace phosphorite
         static bool mapScopeEnabled, mapScopeReady;
         static GTZone lightMap = GTZone.none;
         static int mapFrame = -1;
-        static float mapRetryAfter;
         static readonly Vector3[] playerMapOffsets =
         {
             Vector3.zero,
@@ -54,6 +53,13 @@ namespace phosphorite
             return player != GTZone.none && source != GTZone.none && Normalize(source) == Normalize(player);
         }
 
+        internal static bool IsGhostReactor(Vector3 position)
+        {
+            var graph = ZoneGraphBSP.Instance;
+            var node = graph == null ? null : graph.FindZoneAtPoint(position);
+            return node != null && Normalize(node.zoneId) == GTZone.ghostReactor;
+        }
+
         internal static void Initialize()
         {
             mapScopeEnabled = true;
@@ -80,7 +86,6 @@ namespace phosphorite
             if (GameAccess.TryGetPlayerPosition(out center))
             {
                 float scale = GorillaLocomotion.GTPlayer.Instance == null ? 1 : GorillaLocomotion.GTPlayer.Instance.scale;
-                if (!LightValues.IsFinite(scale) || scale <= 0) scale = 1;
                 return ResolvePlayerMap(center, scale, rig);
             }
             if (IsMapActive(rig)) return rig;
@@ -114,7 +119,7 @@ namespace phosphorite
 
         static GTZone ResolvePlayerMap(Vector3 center, float scale, GTZone rig)
         {
-            if (mapGraph == null || !LightValues.IsFinitePoint(center)) return IsMapActive(lightMap) ? lightMap : GTZone.none;
+            if (mapGraph == null) return IsMapActive(lightMap) ? lightMap : GTZone.none;
             bool keep = IsMapActive(lightMap);
             GTZone candidate = GTZone.none;
             int best = 0;
@@ -199,7 +204,7 @@ namespace phosphorite
                 LightEditor.ResetSelection(false);
                 mapOwners.Clear();
                 lightMap = zone;
-                mapRetryAfter = 0;
+                LightSpawner.CancelPick();
             }
             mapScopeReady = mapGraph != null && zone != GTZone.none;
             liveMapLights.Clear();
@@ -215,7 +220,7 @@ namespace phosphorite
 
         internal static void Update()
         {
-            if (!mapScopeEnabled || Time.unscaledTime < mapRetryAfter) return;
+            if (!mapScopeEnabled) return;
             if (LightingManager.Runner == null || GameLightingManager.instance == null)
             {
                 mapScopeReady = false;
@@ -223,31 +228,24 @@ namespace phosphorite
             }
             if (mapFrame == Time.frameCount) return;
             mapFrame = Time.frameCount;
-            try
+            var graph = ZoneGraphBSP.Instance;
+            if (graph != mapGraph)
             {
-                var graph = ZoneGraphBSP.Instance;
-                if (graph != mapGraph)
-                {
-                    mapGraph = graph;
-                    mapOwners.Clear();
-                }
-                if (graph == null || !graph.HasCompiledTree())
-                {
-                    SetCurrentMap(GTZone.none);
-                    return;
-                }
-                var next = GetPlayerMap();
-                SetCurrentMap(next);
+                mapGraph = graph;
+                mapOwners.Clear();
             }
-            catch (Exception e)
+            if (graph == null || !graph.HasCompiledTree())
             {
-                mapRetryAfter = Time.unscaledTime + 2f;
-                Plugin.Log("Map lights: " + e, true);
+                SetCurrentMap(GTZone.none);
+                return;
             }
+            var next = GetPlayerMap();
+            SetCurrentMap(next);
         }
 
         internal static void OnLightsCleared()
         {
+            LightSpawner.CancelPick();
             mapOwners.Clear();
             mapFrame = -1;
         }

@@ -8,13 +8,12 @@ namespace phosphorite
         internal static float DistanceSquared(Matrix4x4 worldToBox, Vector3 position)
         {
             var point = worldToBox.MultiplyPoint3x4(position);
-            if (!LightValues.IsFinitePoint(point)) return float.PositiveInfinity;
             float distance = 0;
             for (int axis = 0; axis < 3; axis++)
             {
                 var row = worldToBox.GetRow(axis);
                 float length = (float) Math.Sqrt(row.x * row.x + row.y * row.y + row.z * row.z);
-                if (!LightValues.IsFinite(length) || length < 0.000001f) return float.PositiveInfinity;
+                if (length < 0.000001f) return float.PositiveInfinity;
                 float gap = Math.Max(0, Math.Abs(point[axis]) - 1) / length;
                 distance += gap * gap;
             }
@@ -36,7 +35,6 @@ namespace phosphorite
                 var zone = MapLighting.Normalize(definition.zoneId);
                 if (zone == GTZone.none) continue;
                 float distance = DistanceSquared(volume.matrix, position);
-                if (!LightValues.IsFinite(distance)) continue;
                 if (distance < best - 0.000001f)
                 {
                     best = distance;
