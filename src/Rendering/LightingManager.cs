@@ -43,8 +43,6 @@ namespace phosphorite
             if (manager != null) manager.SetAmbientLightDynamic(color);
         }
 
-        public static void ReapplyAmbient() { SetAmbient(ambient); }
-
         public static GameLight AddLight(Vector3 position, float intensity, Color color)
         {
             var lightObject = new GameObject("phosphorite_light");

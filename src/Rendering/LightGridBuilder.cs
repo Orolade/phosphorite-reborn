@@ -8,7 +8,6 @@ namespace phosphorite
     {
         public static LightRenderer.GridData Build(IList<LightRenderer.RenderLight> lights, int globals, LightRenderer.GridData reuse)
         {
-            if (globals < 0 || globals > lights.Count) throw new ArgumentOutOfRangeException("globals");
             var data = reuse ?? new LightRenderer.GridData();
             Array.Clear(data.counts, 0, data.counts.Length);
             Array.Clear(data.cursors, 0, data.cursors.Length);
@@ -23,7 +22,6 @@ namespace phosphorite
             for (int i = globals; i < lights.Count; i++)
             {
                 var item = lights[i];
-                if (!LightValues.IsFinitePoint(item.position) || !LightValues.IsFinite(item.radiusSquared) || item.radiusSquared <= 0) throw new ArgumentException("Invalid grid source");
                 var p = item.position;
                 float radius = (float) Math.Sqrt(item.radiusSquared) + (Math.Abs(p.x) + Math.Abs(p.y) + Math.Abs(p.z)) / 2048f + 0.001f;
                 item.gridRadius = radius;
