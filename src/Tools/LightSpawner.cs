@@ -53,7 +53,6 @@ namespace phosphorite
             if (!LightEditor.IsEditable(light)) return false;
             float intensity = LightEditor.ReadIntensity(light);
             var color = light.light.color;
-            if (!LightValues.IsValidIntensity(intensity) || !LightValues.IsValidRgb(color.r, color.g, color.b)) return false;
             LightSpawnerSettings.SetIntensity(intensity);
             LightSpawnerSettings.SetColor(color);
             CancelPick();

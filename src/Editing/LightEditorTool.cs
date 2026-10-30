@@ -106,7 +106,6 @@ namespace phosphorite
                 CancelMove();
                 return false;
             }
-            if (!LightValues.IsFinitePoint(destination)) return false;
             var light = moveSource;
             CancelMove();
             light.transform.position = destination;

@@ -70,6 +70,18 @@ namespace phosphorite
                 }
                 var settings = JsonConvert.DeserializeObject<LightSettings>(File.ReadAllText(DataPath));
                 if (settings == null) return false;
+                if (settings.ambientColor != null)
+                {
+                    var color = settings.ambientColor;
+                    foreach (float value in new[] { color.r, color.g, color.b, color.a })
+                        if (float.IsNaN(value) || float.IsInfinity(value)) throw new InvalidDataException("Invalid ambient color");
+                }
+                if (settings.lights != null) foreach (var entry in settings.lights)
+                {
+                    if (entry == null || entry.pos == null || entry.color == null) continue;
+                    foreach (float value in new[] { entry.pos.x, entry.pos.y, entry.pos.z, entry.intensity, entry.color.r, entry.color.g, entry.color.b, entry.color.a })
+                        if (float.IsNaN(value) || float.IsInfinity(value)) throw new InvalidDataException("Invalid light data");
+                }
                 ClearLights();
                 if (settings.ambientColor != null)
                     SetAmbient(new Color(settings.ambientColor.r, settings.ambientColor.g, settings.ambientColor.b, settings.ambientColor.a));

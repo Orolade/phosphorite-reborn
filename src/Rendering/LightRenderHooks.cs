@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
@@ -9,30 +8,24 @@ namespace phosphorite
     public static class LightRenderHooks
     {
         static Harmony harmony;
-        static bool hooks;
         public static void PullPrefix(GameLightingManager __instance, ref int __0)
         {
             __0 = NativeLighting.NativeRefreshCount(__instance.maxUseTestLights);
         }
 
-        public static bool SortPrefix(GameLightingManager __instance)
+        public static bool SyncPrefix(GameLightingManager __instance)
         {
-            return !hooks || LightRenderer.IsRecovering || !LightRenderer.TrySync(__instance);
-        }
-
-        public static bool RefreshPrefix(GameLightingManager __instance)
-        {
-            return !hooks || LightRenderer.IsRecovering || !LightRenderer.TrySync(__instance);
+            return !LightRenderer.Sync(__instance);
         }
 
         public static void DynamicPrefix(GameLightingManager __instance, ref bool __0)
         {
-            if (hooks && Plugin.Host != null && __instance == GameLightingManager.instance) __0 = true;
+            if (Plugin.Host != null && __instance == GameLightingManager.instance) __0 = true;
         }
 
         internal static void BeforeCamera(Camera camera)
         {
-            if (hooks && GameLightingManager.instance != null) LightRenderer.RenderCamera(camera);
+            if (GameLightingManager.instance != null) LightRenderer.RenderCamera(camera);
         }
 
         internal static void BeforeSrpCamera(ScriptableRenderContext context, Camera camera)
@@ -47,42 +40,32 @@ namespace phosphorite
 
         internal static void Initialize()
         {
+            LightBuffers.Initialize();
+            harmony = new Harmony("com.brokenstone.gorillatag.phosphorite.lighting");
             try
             {
-                NativeLighting.CheckLayout();
-                LightBuffers.Initialize();
-                harmony = new Harmony("com.brokenstone.gorillatag.phosphorite.lighting");
-                PatchPrefix(typeof(GameLightingManager).GetMethod("SortLights"), nameof(SortPrefix));
-                PatchPrefix(typeof(GameLightingManager).GetMethod("RefreshLightData", GameAccess.InstanceFields), nameof(RefreshPrefix));
+                PatchPrefix(typeof(GameLightingManager).GetMethod("SortLights"), nameof(SyncPrefix));
+                PatchPrefix(typeof(GameLightingManager).GetMethod("RefreshLightData", GameAccess.InstanceFields), nameof(SyncPrefix));
                 PatchPrefix(typeof(GameLightingManager).GetMethod("PullLightData"), nameof(PullPrefix));
                 PatchPrefix(typeof(GameLightingManager).GetMethod("SetCustomDynamicLightingEnabled"), nameof(DynamicPrefix));
-                hooks = true;
                 Camera.onPreCull += BeforeCamera;
                 RenderPipelineManager.beginCameraRendering += BeforeSrpCamera;
             }
-            catch (Exception e)
+            catch
             {
-                hooks = false;
-                Unpatch();
-                Plugin.Log("Lighting init: " + e, true);
+                Dispose();
+                throw;
             }
         }
 
         internal static void Unpatch()
         {
-            if (harmony != null) try
-            {
-                harmony.UnpatchSelf();
-            }
-            catch
-            {
-            }
+            if (harmony != null) harmony.UnpatchSelf();
             harmony = null;
         }
 
         internal static void Dispose()
         {
-            hooks = false;
             Camera.onPreCull -= BeforeCamera;
             RenderPipelineManager.beginCameraRendering -= BeforeSrpCamera;
             Unpatch();

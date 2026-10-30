@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,10 +6,7 @@ namespace phosphorite
     public static class LightRenderer
     {
         static bool dirty = true;
-        static bool recovering;
-        static bool failureReported;
         static int lastFrame = -1, lastRegistered = -1, activeCount, activeGlobals;
-        static float fallbackUntil;
         static GameLightingManager syncedManager;
         static readonly Dictionary<GameLight, RenderLight> entries = new Dictionary<GameLight, RenderLight>();
         static readonly List<RenderLight> rendered = new List<RenderLight>();
@@ -56,14 +52,6 @@ namespace phosphorite
             public uint[] indices = new uint[NativeLighting.GridDimension * NativeLighting.GridDimension * NativeLighting.GridDimension * NativeLighting.NativeCellCapacity];
             internal int[] cursors = new int[NativeLighting.GridDimension * NativeLighting.GridDimension * NativeLighting.GridDimension];
             internal CellBounds[] bounds = new CellBounds[0];
-        }
-
-        internal static bool IsRecovering
-        {
-            get
-            {
-                return recovering;
-            }
         }
 
         public static void OnLightAdded(GameLight light)
@@ -116,31 +104,7 @@ namespace phosphorite
             entries.Clear();
         }
 
-        internal static bool TrySync(GameLightingManager manager)
-        {
-            if (recovering || Time.unscaledTime < fallbackUntil) return false;
-            try
-            {
-                bool synced = Sync(manager);
-                if (synced) failureReported = false;
-                return synced;
-            }
-            catch (Exception e)
-            {
-                dirty = true;
-                lastFrame = -1;
-                fallbackUntil = Time.unscaledTime + 2f;
-                RestoreNativeLighting(manager);
-                if (!failureReported)
-                {
-                    Plugin.Log("Lighting update: " + e, true);
-                    failureReported = true;
-                }
-                return false;
-            }
-        }
-
-        static bool Sync(GameLightingManager manager)
+        internal static bool Sync(GameLightingManager manager)
         {
             MapLighting.Update();
             var list = GameAccess.GetLights(manager);
@@ -191,7 +155,7 @@ namespace phosphorite
                 light.UpdateCachedLightColorAndIntensity();
                 Vector3 position = light.cachedPosition;
                 var color = light.cachedColorAndIntensity;
-                if (!LightValues.IsFinitePoint(position) || !LightValues.IsFinite(color.x) || !LightValues.IsFinite(color.y) || !LightValues.IsFinite(color.z) || !LightValues.IsFinite(color.w) || !LightValues.IsFinite(light.range) || light.range <= 0) continue;
+                if (light.range <= 0) continue;
                 if (color.x == 0 && color.y == 0 && color.z == 0) continue;
                 item.position = position;
                 item.custom = custom || transient;
@@ -285,29 +249,6 @@ namespace phosphorite
             previousGridGlobals = globals;
         }
 
-        static void RestoreNativeLighting(GameLightingManager manager)
-        {
-            recovering = true;
-            try
-            {
-                NativeLighting.BindBuffers(manager);
-                if (manager == null) return;
-                previousGridCount = -1;
-                manager.SortLights();
-                manager.Tick();
-                var list = GameAccess.GetLights(manager);
-                activeCount = list == null ? 0 : Math.Min(NativeLighting.NativeLightCapacity, list.Count);
-            }
-            catch (Exception e)
-            {
-                if (!failureReported) Plugin.Log("Lighting reset: " + e, true);
-            }
-            finally
-            {
-                recovering = false;
-            }
-        }
-
         static void ReleaseExtendedLighting()
         {
             LightBuffers.Dispose();
@@ -321,17 +262,31 @@ namespace phosphorite
             activeGlobals = 0;
             lastFrame = -1;
             dirty = true;
-            failureReported = false;
         }
 
         public static void Dispose()
         {
             LightRenderHooks.Dispose();
-            if (LightBuffers.Allocated) RestoreNativeLighting(GameLightingManager.instance);
-            ReleaseExtendedLighting();
-            entries.Clear();
-            transientLights.Clear();
-            syncedManager = null;
+            try
+            {
+                if (LightBuffers.Allocated)
+                {
+                    var manager = GameLightingManager.instance;
+                    NativeLighting.BindBuffers(manager);
+                    if (manager != null)
+                    {
+                        manager.SortLights();
+                        manager.Tick();
+                    }
+                }
+            }
+            finally
+            {
+                ReleaseExtendedLighting();
+                entries.Clear();
+                transientLights.Clear();
+                syncedManager = null;
+            }
         }
 
         internal static void RenderCamera(Camera camera)
@@ -339,7 +294,7 @@ namespace phosphorite
             renderingCamera = camera;
             try
             {
-                TrySync(GameLightingManager.instance);
+                Sync(GameLightingManager.instance);
             }
             finally
             {

@@ -47,7 +47,7 @@ namespace phosphorite
                 var zone = FromCollider(surface);
                 if (zone == GTZone.none) continue;
                 float distance = (surface.ClosestPoint(position) - position).sqrMagnitude;
-                if (!LightValues.IsFinite(distance) || distance > SurfaceRadius * SurfaceRadius) continue;
+                if (distance > SurfaceRadius * SurfaceRadius) continue;
                 if (distance < best - 0.000001f)
                 {
                     best = distance;

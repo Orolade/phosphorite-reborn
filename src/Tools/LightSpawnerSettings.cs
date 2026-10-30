@@ -15,7 +15,6 @@ namespace phosphorite
 
         public static void SetIntensity(float value)
         {
-            if (!LightValues.IsValidIntensity(value)) return;
             intensity = value;
             if (intensityConfig != null) intensityConfig.Value = value;
         }
@@ -35,7 +34,8 @@ namespace phosphorite
         {
             intensityConfig = config.Bind("LightGun", "Intensity", 1f, "");
             colorConfig = config.Bind("LightGun", "Color", "#FFFFFF", "");
-            SetIntensity(intensityConfig.Value);
+            float savedIntensity = intensityConfig.Value;
+            SetIntensity(float.IsNaN(savedIntensity) || float.IsInfinity(savedIntensity) || savedIntensity == 0 ? 1f : savedIntensity);
             Color parsed;
             string saved = colorConfig.Value;
             SetColor(ColorUtility.TryParseHtmlString(saved ?? "", out parsed) ? parsed : Color.white);

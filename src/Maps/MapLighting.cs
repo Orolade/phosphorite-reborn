@@ -151,7 +151,7 @@ namespace phosphorite
 
         static GTZone FindMap(Vector3 position)
         {
-            if (mapGraph == null || !LightValues.IsFinitePoint(position)) return GTZone.none;
+            if (mapGraph == null) return GTZone.none;
             var surface = MapSurfaceLookup.NearPosition(position);
             if (surface != GTZone.none) return surface;
             var node = mapGraph.FindZoneAtPoint(position);

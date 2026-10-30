@@ -65,7 +65,6 @@ namespace phosphorite
         public static bool Raycast(Vector3 origin, Vector3 direction, Vector3 center, float radius, float maximum, out float distance)
         {
             distance = 0;
-            if (!LightValues.IsFinitePoint(center) || radius <= 0 || maximum < 0) return false;
             double x = (double) origin.x - center.x, y = (double) origin.y - center.y, z = (double) origin.z - center.z;
             double a = (double) direction.x * direction.x + (double) direction.y * direction.y + (double) direction.z * direction.z;
             if (a < 1e-12) return false;
@@ -141,7 +140,6 @@ namespace phosphorite
             foreach (var light in LightingManager.lights) if (LightEditor.IsMapLight(light) && light != selected && light != hover)
             {
                 var position = light.transform.position;
-                if (!LightValues.IsFinitePoint(position)) continue;
                 Color32 color = light.light.color;
                 color.a = 255;
                 MarkerBatch batch;
@@ -170,7 +168,6 @@ namespace phosphorite
 
         static void DrawMarker(Vector3 position, Color color, float radius)
         {
-            if (!LightValues.IsFinitePoint(position)) return;
             color.a = 1;
             markerColor.SetColor("_BaseColor", color);
             markerColor.SetColor("_Color", color);

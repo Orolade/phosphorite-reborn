@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using GorillaLocomotion;
 
@@ -15,7 +14,7 @@ namespace phosphorite
 
         public static bool IsCloserHit(float distance, int colliderId, float currentDistance, int currentId)
         {
-            return LightValues.IsFinite(distance) && distance >= 0 && (distance < currentDistance || (distance == currentDistance && colliderId < currentId));
+            return distance < currentDistance || (distance == currentDistance && colliderId < currentId);
         }
 
         internal static bool Raycast(Ray ray, out RaycastHit target)

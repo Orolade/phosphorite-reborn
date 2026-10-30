@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -37,12 +36,6 @@ namespace phosphorite
             return (uint) Mathf.FloatToHalf(x) | ((uint) Mathf.FloatToHalf(y) << 16);
         }
 
-        static GraphicsBuffer MakeLightBuffer(int count, int stride)
-        {
-            if ((long) count * stride > SystemInfo.maxGraphicsBufferSize) throw new NotSupportedException("Light buffer too large");
-            return new GraphicsBuffer(GraphicsBuffer.Target.Structured, count, stride);
-        }
-
         internal static void EnsureLightBuffers(int count)
         {
             if (extendedPacked != null && extendedLegacy != null && packedLights.Length >= count) return;
@@ -50,8 +43,8 @@ namespace phosphorite
             GraphicsBuffer packed = null, legacy = null;
             try
             {
-                packed = MakeLightBuffer(size, Marshal.SizeOf(typeof(PackedLight)));
-                legacy = MakeLightBuffer(size, Marshal.SizeOf(typeof(LegacyLight)));
+                packed = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size, Marshal.SizeOf(typeof(PackedLight)));
+                legacy = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size, Marshal.SizeOf(typeof(LegacyLight)));
             }
             catch
             {
@@ -69,10 +62,10 @@ namespace phosphorite
 
         internal static void EnsureGridBuffers(LightRenderer.GridData grid)
         {
-            if (extendedCounts == null) extendedCounts = MakeLightBuffer(grid.counts.Length, 4);
+            if (extendedCounts == null) extendedCounts = new GraphicsBuffer(GraphicsBuffer.Target.Structured, grid.counts.Length, 4);
             int size = grid.counts.Length * grid.cellCapacity;
             if (extendedIndices != null && extendedIndices.count >= size) return;
-            var replacement = MakeLightBuffer(size, 4);
+            var replacement = new GraphicsBuffer(GraphicsBuffer.Target.Structured, size, 4);
             ReleaseBuffer(ref extendedIndices);
             extendedIndices = replacement;
         }
